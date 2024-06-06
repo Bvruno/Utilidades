@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Responses</title>
+    <!-- CSS de Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Upload Image</h1>
+        <form method="post" action="/responses" enctype="multipart/form-data" class="mb-5">
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" id="customFile" name="image" required>
+                <label class="custom-file-label" for="customFile">Choose file</label>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block mt-4">Upload</button>
+        </form>
+
+        <h1 class="text-center mb-4">Responses</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>N.</th>
+                    <th>Método de Pago</th>
+                    <th>Monto</th>
+                    <th>Fecha</th>
+                    <th>Destinatario</th>
+                    <th>Código de Operación</th>
+                    <th>Estado</th>
+                    <th>Imagen</th>
+                    <th>Función</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr th:each="response : ${responses}">
+                <td th:text="${response.id}"></td>
+                <td th:text="${response.entidad}"></td>
+                <td th:text="${response.monto}"></td>
+                <td th:text="${response.fechaString}"></td>
+                <td th:text="${response.destinatario}"></td>
+                <td th:text="${response.codigoOperacion}"></td>
+                <td th:text="${response.state}"></td>
+                <td>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#imageModal" th:data-img="'data:image/png;base64,'+${response.imgBase64}">
+                        Boucher
+                    </button>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-success state-btn" th:data-id="${response.id}" th:onclick="'changeState(this, \'ACCEPTED\')'">
+                        Aceptar
+                    </button>
+                    <button type="button" class="btn btn-danger state-btn" th:data-id="${response.id}" th:onclick="'changeState(this, \'REJECTED\')'">
+                        Rechazar
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <img id="modalImage" src="" class="img-fluid" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS de Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- JS para cambiar la imagen del modal -->
+    <script>
+        $(document).ready(function() {
+            $('.btn').on('click', function() {
+                var imageSrc = $(this).data('img');
+                $('#modalImage').attr('src', imageSrc);
+            });
+        });
+
+        document.querySelector('.custom-file-input').addEventListener('change', function(e) {
+            var fileName = document.getElementById("customFile").files[0].name;
+            var nextSibling = e.target.nextElementSibling
+            nextSibling.innerText = fileName
+        });
+    </script>
+
+    <script>
+        function changeState(btn, newState) {
+            var id = btn.dataset.id;
+
+            fetch('/api/responses/' + id + '/state', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: newState,
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(response) {
+                if (response.state) {
+                    // Actualiza el estado en la interfaz de usuario
+                    var row = btn.parentElement;
+                    var stateCell = row.querySelector('td:nth-child(6)');
+                    stateCell.innerText = newState;
+
+                    // Actualiza los botones
+                    var acceptButtons = row.querySelectorAll('.btn-success');
+                    var rejectButtons = row.querySelectorAll('.btn-danger');
+                    if (newState === 'ACCEPTED') {
+                        if (acceptButton) acceptButton.style.display = 'none';
+                        if (rejectButton) rejectButton.style.display = '';
+                    } else if (newState === 'REJECTED') {
+                        if (acceptButton) acceptButton.style.display = '';
+                        if (rejectButton) rejectButton.style.display = 'none';
+                    } else if (newState === 'PENDING') {
+                        if (acceptButton) acceptButton.style.display = '';
+                        if (rejectButton) rejectButton.style.display = 'none';
+                    }
+                } else {
+                    console.error('Error updating state');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
