@@ -1,4 +1,4 @@
-package com.consulta.consultamedica.service;
+package com.bvruno.utilidades.service;
 
 import org.imgscalr.Scalr;
 import org.springframework.stereotype.Service;

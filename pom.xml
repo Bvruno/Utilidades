@@ -8,10 +8,10 @@
 		<version>3.2.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.consulta</groupId>
-	<artifactId>consulta</artifactId>
+	<groupId>com.bvruno</groupId>
+	<artifactId>utilidades</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
-	<name>consulta</name>
+	<name>utilidades</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>17</java.version>
@@ -58,6 +58,11 @@
 			<version>4.2</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.tinify</groupId>
+			<artifactId>tinify</artifactId>
+			<version>RELEASE</version>
+		</dependency>
 
 	</dependencies>
 

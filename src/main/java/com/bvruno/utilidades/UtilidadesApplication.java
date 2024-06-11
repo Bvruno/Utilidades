@@ -1,13 +1,13 @@
-package com.consulta.consultamedica;
+package com.bvruno.utilidades;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ConsultaApplication {
+public class UtilidadesApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ConsultaApplication.class, args);
+		SpringApplication.run(UtilidadesApplication.class, args);
 	}
 
 }

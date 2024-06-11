@@ -1,6 +1,6 @@
-package com.consulta.consultamedica.service;
+package com.bvruno.utilidades.service;
 
-import com.consulta.consultamedica.model.Response;
+import com.bvruno.utilidades.model.Response;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;

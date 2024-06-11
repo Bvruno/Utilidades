@@ -1,4 +1,4 @@
-package com.consulta.consultamedica.exception;
+package com.bvruno.utilidades.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(String message) {

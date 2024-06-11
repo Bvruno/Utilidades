@@ -1,8 +1,8 @@
-package com.consulta.consultamedica.controller;
+package com.bvruno.utilidades.controller;
 
-import com.consulta.consultamedica.model.Response;
-import com.consulta.consultamedica.service.ResponseService;
-import com.consulta.consultamedica.service.TesseractOCRService;
+import com.bvruno.utilidades.service.ResponseService;
+import com.bvruno.utilidades.service.TesseractOCRService;
+import com.bvruno.utilidades.model.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +12,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/responses")
-public class ResponseController {
+public class OcrController {
     @Autowired
     private TesseractOCRService tesseractOCRService;
     @Autowired

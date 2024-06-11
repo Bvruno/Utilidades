@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <title>Responses</title>
     <!-- CSS de Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
 <div class="container-fluid mt-5">
+    <h1 class=" text-center mb-4">Image Processing with OCR</h1>
     <div class="row">
         <div class="col-md-4">
 
@@ -166,22 +168,34 @@
         .then(function(response) {
             if (response.state) {
                 // Actualiza el estado en la interfaz de usuario
-                var row = btn.parentElement;
-                var stateCell = row.querySelector('td:nth-child(6)');
+                var row = btn.parentElement.parentElement;
+                var stateCell = row.querySelector('td:nth-child(7)');
                 stateCell.innerText = newState;
 
                 // Actualiza los botones
                 var acceptButtons = row.querySelectorAll('.btn-success');
                 var rejectButtons = row.querySelectorAll('.btn-danger');
                 if (newState === 'ACCEPTED') {
-                    if (acceptButton) acceptButton.style.display = 'none';
-                    if (rejectButton) rejectButton.style.display = '';
+                    acceptButtons.forEach(function(button) {
+                        button.style.display = 'none';
+                    });
+                    rejectButtons.forEach(function(button) {
+                        button.style.display = '';
+                    });
                 } else if (newState === 'REJECTED') {
-                    if (acceptButton) acceptButton.style.display = '';
-                    if (rejectButton) rejectButton.style.display = 'none';
+                    acceptButtons.forEach(function(button) {
+                        button.style.display = '';
+                    });
+                    rejectButtons.forEach(function(button) {
+                        button.style.display = 'none';
+                    });
                 } else if (newState === 'PENDING') {
-                    if (acceptButton) acceptButton.style.display = '';
-                    if (rejectButton) rejectButton.style.display = 'none';
+                    acceptButtons.forEach(function(button) {
+                        button.style.display = '';
+                    });
+                    rejectButtons.forEach(function(button) {
+                        button.style.display = '';
+                    });
                 }
             } else {
                 console.error('Error updating state');

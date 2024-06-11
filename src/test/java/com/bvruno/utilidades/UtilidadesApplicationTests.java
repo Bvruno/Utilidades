@@ -1,10 +1,10 @@
-package com.consulta.consultamedica;
+package com.bvruno.utilidades;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ConsultaApplicationTests {
+class UtilidadesApplicationTests {
 
 	@Test
 	void contextLoads() {

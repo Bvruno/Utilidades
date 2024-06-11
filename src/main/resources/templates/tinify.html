@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Processing</title>
+    <!-- CSS de Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+</head>
+<body>
+
+<div class="container mt-5">
+    <h1 class=" text-center mb-4">Image Processing with Tinify</h1>
+
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Input de archivo común para todas las funciones -->
+            <div class="custom-file mb-3">
+                <input type="file" class="custom-file-input" id="customFile" name="image" accept="image/*"
+                       multiple required>
+                <label class="custom-file-label" for="customFile">Choose file</label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <!-- Formulario para comprimir imagen -->
+                    <form id="compressImageForm" method="post" enctype="multipart/form-data">
+                        <h2 class="card-title text-center mb-4">Compress Image</h2>
+                        <button type="submit" class="btn btn-primary btn-block mt-4">Compress</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <!-- Formulario para redimensionar imagen -->
+                    <form id="resizeImageForm" method="post" enctype="multipart/form-data">
+                        <h2 class="card-title text-center mb-4">Resize Image</h2>
+                        <div class="form-group">
+                            <select class="form-control" name="proportion" required>
+                                <option value="1:1">1:1 (Cuadrado)</option>
+                                <option value="4:3">4:3 (Estándar)</option>
+                                <option value="16:9">16:9 (Pantalla ancha)</option>
+                                <option value="21:9">21:9 (Ultra ancha)</option>
+                                <option value="3:2">3:2 (Fotografía)</option>
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-6">
+                                <label for="widthInput">Ancho</label>
+                                <div class="input-group mb-3">
+                                    <input type="number" class="form-control" id="widthInput" name="width"
+                                           placeholder="Ancho" required>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">px</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="heightInput">Alto</label>
+                                <div class="input-group mb-3">
+                                    <input type="number" class="form-control" id="heightInput" name="height"
+                                           placeholder="Alto" required>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">px</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <select class="form-control" id="methodResize" name="methodResize" required>
+                                <option value="fit" data-icon="fas fa-info-circle" data-toggle="tooltip"
+                                        title="Ajusta la imagen para que quepa dentro del ancho y alto especificados, manteniendo su aspecto original.">
+                                    Ajustar
+                                </option>
+                                <option value="scale" data-icon="fas fa-info-circle" data-toggle="tooltip"
+                                        title="Cambia el tamaño de la imagen al ancho y alto especificados, sin tener en cuenta el aspecto original de la imagen.">
+                                    Escalar
+                                </option>
+                                <option value="cover" data-icon="fas fa-info-circle" data-toggle="tooltip"
+                                        title="Cambia el tamaño de la imagen para que cubra completamente el ancho y alto especificados, manteniendo su aspecto original.">
+                                    Cubrir
+                                </option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block mt-4">Resize</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <!-- Formulario para convertir imagen -->
+                    <form id="convertImageForm" method="post" enctype="multipart/form-data">
+                        <h2 class="card-title text-center mb-4">Convert Image</h2>
+                        <div class="form-group">
+                            <select class="form-control" id="format" name="format" required>
+                                <option value="webp">WebP</option>
+                                <option value="jpeg">JPEG</option>
+                                <option value="png">PNG</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block mt-4">Convert</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <ul id="fileList" class="list-group"></ul>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="processModal" tabindex="-1" role="dialog" aria-labelledby="processModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="processModalLabel">Processing...</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Tramitando su solicitud... Esto puede tardar varios minutos, dependiendo de la
+                        función que se está ejecutando o el número de archivos que se están procesando. Te recomendamos que lo dejes actuar
+                        y ve a tomar un café.</p>
+                    <img id="processImage" src="https://i.pinimg.com/originals/b0/8a/16/b08a162641776d541e513019f3d42cf8.gif" alt="Processing image"
+                         style="width: 100%; height: auto;">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelButton">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JS de Bootstrap -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<!-- JS de Popper.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+<script>
+    // Cambia el nombre del archivo seleccionado en el input file
+    $('.custom-file-input').on('change', function() {
+        var fileName = $(this).val().split('\\').pop();
+        $(this).siblings('.custom-file-label').addClass("selected").html(fileName);
+    });
+</script>
+<script>
+    // Obtén los elementos del DOM
+    var widthInput = document.querySelector('input[name="width"]');
+    var heightInput = document.querySelector('input[name="height"]');
+    var proportionSelect = document.querySelector('select[name="proportion"]');
+
+    // Agrega controladores de eventos a los campos de entrada
+    widthInput.addEventListener('input', function() {
+        var proportion = proportionSelect.value.split(':').map(Number);
+        heightInput.value = Math.round(widthInput.value * proportion[1] / proportion[0]);
+    });
+
+    heightInput.addEventListener('input', function() {
+        var proportion = proportionSelect.value.split(':').map(Number);
+        widthInput.value = Math.round(heightInput.value * proportion[0] / proportion[1]);
+    });
+
+    // Agrega un controlador de eventos al select de proporción
+    proportionSelect.addEventListener('change', function() {
+        var proportion = this.value.split(':').map(Number);
+        widthInput.value = Math.round(heightInput.value * proportion[0] / proportion[1]);
+    });
+</script>
+<script>
+    // Mantén una lista separada de los archivos seleccionados
+    var selectedFiles = [];
+
+    document.querySelector('.custom-file-input').addEventListener('change', function(e) {
+        var fileList = document.getElementById('fileList');
+        fileList.innerHTML = '';
+
+        // Actualiza la lista de archivos seleccionados
+        selectedFiles = Array.from(this.files);
+
+        selectedFiles.forEach(function(file, i) {
+            var listItem = document.createElement('li');
+            listItem.textContent = file.name;
+            listItem.className = 'list-group-item d-flex justify-content-between align-items-center'; // Añadir clases de Bootstrap
+
+            var removeButton = document.createElement('button');
+            removeButton.textContent = 'Remove';
+            removeButton.className = 'btn btn-danger btn-sm';
+
+            // Almacena el índice del archivo en un atributo de datos del botón de eliminar
+            removeButton.dataset.index = i;
+
+            // Vincula el evento de clic al botón de eliminar
+            removeButton.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                // Usa el índice almacenado en el atributo de datos para encontrar y eliminar el archivo
+                var index = e.target.dataset.index;
+                selectedFiles.splice(index, 1);
+
+                // Actualiza la lista de archivos en el input de tipo file
+                var newFileList = new DataTransfer();
+                selectedFiles.forEach(function(file) {
+                    newFileList.items.add(file);
+                });
+                document.getElementById('customFile').files = newFileList.files;
+
+                // Elimina el elemento de la lista
+                fileList.removeChild(e.target.parentElement);
+            });
+
+            listItem.appendChild(removeButton);
+            fileList.appendChild(listItem);
+        });
+    });
+</script>
+<script>
+    // Obtén el modal y los elementos relacionados
+    var processModal = $('#processModal');
+    var processText = $('#processText');
+    var processImage = $('#processImage');
+    var cancelButton = $('#cancelButton');
+
+    function showModal() {
+        processModal.modal('show');
+    }
+
+    function hideModal() {
+        processModal.modal('hide');
+    }
+
+    function updateModalText(text) {
+        processText.text(text);
+    }
+
+    cancelButton.click(function() {
+        // Aquí puedes agregar el código para cancelar el proceso
+        // Por ejemplo, puedes abortar la solicitud AJAX
+    });
+
+    sendRequest(compressImageForm, '/compressImage', 'Compressing images...');
+    sendRequest(resizeImageForm, '/resizeImage', 'Resizing images...');
+    sendRequest(convertImageForm, '/convertImage', 'Converting images...');
+
+    function sendRequest(form, url, processText) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            showModal();
+            updateModalText(processText);
+
+            var formData = new FormData();
+
+            var fileInput = document.getElementById('customFile');
+
+            var widthInput = document.getElementById('widthInput');
+            var heightInput = document.getElementById('heightInput');
+            var methodResize = document.getElementById('methodResize');
+            
+            var format = document.getElementById('format');
+
+            for (var i = 0; i < fileInput.files.length; i++) {
+                formData.append('image', fileInput.files[i]);
+            }
+
+            formData.append('width', widthInput.value);
+            formData.append('height', heightInput.value);
+            formData.append('methodResize', methodResize.value);
+
+            formData.append('format', format.value);
+
+            fetch(url, {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.blob();
+            })
+            .then(function(blob) {
+                var url = window.URL.createObjectURL(blob);
+
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = 'file.zip';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+
+                window.URL.revokeObjectURL(url);
+
+                setTimeout(hideModal, 500);
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+                updateModalText('Error: ' + error.message);
+                setTimeout(hideModal, 2000);
+            });
+        });
+    }
+</script>
+</body>
+</html>

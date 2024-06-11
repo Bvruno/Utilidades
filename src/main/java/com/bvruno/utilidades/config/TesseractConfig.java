@@ -1,12 +1,15 @@
-package com.consulta.consultamedica;
+package com.bvruno.utilidades.config;
 
+import com.tinify.Tinify;
 import net.sourceforge.tess4j.ITessAPI;
 import net.sourceforge.tess4j.Tesseract;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class TesseractConfig {
+
     @Bean
     Tesseract tesseract() {
         Tesseract tesseract = new Tesseract();
@@ -18,8 +21,6 @@ public class TesseractConfig {
         tesseract.setOcrEngineMode(ITessAPI.TessOcrEngineMode.OEM_LSTM_ONLY); // Sólo usa el modelo LSTM (redes neuronales)
         tesseract.setTessVariable("load_system_dawg", "F"); // Desactivar ciertos diccionarios para mejorar rendimiento
         tesseract.setTessVariable("load_freq_dawg", "F"); // Desactivar ciertos diccionarios para mejorar rendimiento
-
-
 
         return tesseract;
     }

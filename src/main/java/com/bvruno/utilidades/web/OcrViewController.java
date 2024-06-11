@@ -1,8 +1,8 @@
-package com.consulta.consultamedica.controller;
+package com.bvruno.utilidades.web;
 
-import com.consulta.consultamedica.dao.ResponseRepository;
-import com.consulta.consultamedica.model.Response;
-import com.consulta.consultamedica.service.TesseractOCRService;
+import com.bvruno.utilidades.service.TesseractOCRService;
+import com.bvruno.utilidades.repository.OcrRepository;
+import com.bvruno.utilidades.model.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,17 +19,17 @@ import java.util.List;
 
 @Controller
 @Slf4j
-public class ResponseViewController {
+public class OcrViewController {
 
 	@Autowired
 	private TesseractOCRService tesseractOCRService;
 
 	@Autowired
-	private ResponseRepository responseRepository;
+	private OcrRepository ocrRepository;
 
 	@GetMapping("/responses")
 	public String getResponses(Model model) {
-		List<Response> responses = responseRepository.findAll();
+		List<Response> responses = ocrRepository.findAll();
 		responses.sort(Comparator.comparing(Response::getId));
 		model.addAttribute("responses", responses);
 		return "responses";
@@ -41,8 +41,8 @@ public class ResponseViewController {
 		response.setImgBase64(image.isEmpty() ? "" : Base64.getEncoder().encodeToString(image.getBytes()));
 		log.info(image.getBytes().length + " bytes");
 		log.info(Base64.getEncoder().encodeToString(image.getBytes()).length() + " Base64");
-		responseRepository.save(response);
-		List<Response> responses = responseRepository.findAll();
+		ocrRepository.save(response);
+		List<Response> responses = ocrRepository.findAll();
 		responses.sort(Comparator.comparing(Response::getId));
 		model.addAttribute("responses", responses);
 		return "responses";
