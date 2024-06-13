@@ -114,7 +114,7 @@ public class TinifyService {
             if (format != null) {
                 destination = destination.substring(0, destination.indexOf(".") + 1) + format;
             }
-            log.info("Adding {} to zip file", destination);
+
             addToZipFile(destination, zos);
             Path path = Paths.get(destination);
             Files.deleteIfExists(path);
